@@ -1,0 +1,98 @@
+---
+description: 原文：https://github.com/nostr-protocol/nips/blob/master/05.md
+---
+
+# NIP05
+
+## 将 NOSTR 密钥映射到基于 DNS 的 Internet 标识符
+
+`final` `optional` `author:fiatjaf` `author:mikedilger`
+
+在 kind `0`（ `set_metadata`）事件上，可以使用[互联网标识符](https://datatracker.ietf.org/doc/html/rfc5322#section-3.4.1)（类似于电子邮件的地址）作为值来指定键 `"nip05"`。尽管上面有一个非常自由的"互联网标识符"规范的链接，但 NIP-05 假设该 `<local-part>` 部分将仅限于字符 `a-z0-9-_.`，不区分大小写。
+
+看到这一点后，客户端将标识符拆分为 `<local-part>` 和 `<domain>`，并使用这些值向 `https://<domain>/.well-known/nostr.json?name=<local-part>` 发出 GET 请求。
+
+结果应该是一个带有 `"names"` 密钥的 JSON 文档对象，该密钥应该是名称到十六进制格式公钥的映射。如果给定 `<name>` 的公钥与事件中 `set_metadata` 的 `pubkey` 匹配，则客户端断定给定的公钥确实可以由其标识符引用。
+
+### 例子
+
+如果客户端看到这样的事件：
+
+```json
+{
+  "pubkey": "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9",
+  "kind": 0,
+  "content": "{\"name\": \"bob\", \"nip05\": \"bob@example.com\"}"
+  ...
+}
+```
+
+它将发出 GET 请求， `https://example.com/.well-known/nostr.json?name=bob` 并返回如下所示的响应
+
+```json
+{
+  "names": {
+    "bob": "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9"
+  }
+}
+```
+
+或者带有 **可选择的** `"relays"` 标识符:
+
+```json
+{
+  "names": {
+    "bob": "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9"
+  },
+  "relays": {
+    "b0635d6a9851d3aed0cd6c495b282167acf761729078d975fc341b22650b07b9": [ "wss://relay.example.com", "wss://relay2.example.com" ]
+  }
+}
+```
+
+如果 pubkey 与 `"names"` 中给出的匹配（如上例所示），则表示关联是正确的，并且 `"nip05"` 标识符有效并且可以显示。
+
+可选的“relays”属性可能包含一个对象，其中公钥作为属性，中继 URL 数组作为值。 如果存在，可用于帮助客户端了解可以在哪些中继中找到该用户。 基于查询字符串动态提供“/.well-known/nostr.json”文件的 Web 服务器也应该在可用时为它们在相同回复中提供的任何名称提供中继数据。
+
+## 从 NIP-05 标识符中查找用户
+
+客户端可以支持从\_internet identifiers\_ 查找用户的公钥，流程与上面相同，但相反：首先客户端获取\_well-known\_ URL 并从那里获取用户的公钥，然后它尝试 为该用户获取类型为“0”的事件，并检查它是否具有匹配的“nip05”。
+
+## 注释
+
+### 客户端必须始终遵循公钥，而不是 NIP-05 地址
+
+例如，如果在发现 `bob@bob.com` 具有公钥 `abc...def` 后，用户单击一个按钮以跟踪该配置文件，则客户端必须保留对 `abc...def` 的主要引用 `，而不是` bob@bob.com\`。 如果出于任何原因，地址“https://bob.com/.well-known/nostr.json?name=bob”在未来的任何时间开始返回公钥“1d2...e3f”，则 客户端不得在用户的关注配置文件列表中替换“abc...def”（但它应该停止为该用户显示“bob@bob.com”，因为这将成为无效的“nip05”属性 ).
+
+### 公钥必须是十六进制格式
+
+密钥必须以十六进制格式返回。 NIP-19 `npub` 格式的密钥仅用于在客户端 UI 中显示，不适用于此 NIP。
+
+### 用户发现实施建议
+
+客户端还可以使用它来允许用户搜索其他配置文件。 如果客户端有搜索框或类似的东西，用户可以在那里输入“bob@example.com”，客户端会识别并进行适当的查询以获得公钥并向用户建议。
+
+### 仅显示域作为标识符
+
+客户端可以将标识符“_@domain”视为“根”标识符，并选择仅将其显示为“”。 例如，如果 Bob 拥有“bob.com”，他可能不想要像“bob@bob.com”这样的标识符，因为这是多余的。 相反，Bob 可以使用标识符“_@bob.com”，并期望 Nostr 客户出于所有目的将其显示为“bob.com”并将其视为“bob.com”。
+
+### `/.well-known/nostr.json?name=<local-part>` 格式的推理
+
+通过将 `<local-part>` 添加为查询字符串而不是路径的一部分，该协议可以支持可以按需生成 JSON 的动态服务器和带有可能包含多个名称的 JSON 文件的静态服务器。
+
+### 允许从 JavaScript 应用访问
+
+JavaScript Nostr 应用程序可能会受到浏览器 [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) 策略的限制，这些策略会阻止它们访问用户域上的“/.well-known/nostr.json”。 当 CORS 阻止 JS 加载资源时，JS 程序将其视为网络故障等同于资源不存在，因此纯 JS 应用程序无法确定地告诉用户失败是由 CORS 引起的 问题。 看到请求“/.well-known/nostr.json”文件的网络故障的 JS Nostr 应用程序可能希望向用户推荐他们检查服务器的 CORS 策略，例如：
+
+```bash
+$ curl -sI https://example.com/.well-known/nostr.json?name=bob | grep -i ^Access-Control
+Access-Control-Allow-Origin: *
+```
+
+用户应该确保他们 `/.well-known/nostr.json` 的服务带有 HTTP 头 `Access-Control-Allow-Origin: *`，以确保它可以通过在现代浏览器中运行的纯 JS 应用程序进行验证。
+
+### 安全约束
+
+`/.well-known/nostr.json` 端点不能返回任何 HTTP 重定向。
+
+提取器必须忽略端点给出的 `/.well-known/nostr.json` 任何 HTTP 重定向。
