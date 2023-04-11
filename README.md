@@ -47,11 +47,11 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 
 ## Event Kinds
 
-| kind          | description                      | NIP         |
-| ------------- | -------------------------------- | ----------- |
+| kind          | 描述description                  | NIP           |
+| ------------- | -------------------------------- | ------------- |
 | 0             | 资料Metadata                     | [1](nip01.md)  |
 | 1             | 短文Short Text Note              | [1](nip01.md)  |
-| 2             | Recommend Relay                  | [1](nip01.md)  |
+| 2             | 推荐中继Recommend Relay          | [1](nip01.md)  |
 | 3             | 关注列表Contacts                 | [2](nip02.md)  |
 | 4             | 私聊Encrypted Direct Messages    | [4](nip04.md)  |
 | 5             | 撤销Event Deletion               | [9](nip09.md)  |
@@ -67,13 +67,13 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 6969          | 投票Zap Vote                     | [69](nip69.md) |
 | 9734          | Zap Request                      | [57](nip57.md) |
 | 9735          | 打赏Zap                          | [57](nip57.md) |
-| 10000         | 屏蔽Mute List                    | [51](nip51.md) |
-| 10001         | Pin List                         | [51](nip51.md) |
+| 10000         | 沉默Mute List                    | [51](nip51.md) |
+| 10001         | 固定Pin List                     | [51](nip51.md) |
 | 10002         | 中继列表Relay List Metadata      | [65](nip65.md) |
 | 22242         | Client Authentication            | [42](nip42.md) |
 | 24133         | Nostr Connect                    | [46](nip46.md) |
-| 30000         | Categorized People List          | [51](nip51.md) |
-| 30001         | Categorized Bookmark List        | [51](nip51.md) |
+| 30000         | 人群Categorized People List      | [51](nip51.md) |
+| 30001         | 书签Categorized Bookmark List    | [51](nip51.md) |
 | 30008         | 佩戴徽章Profile Badges           | [58](nip58.md) |
 | 30009         | 徽章定义Badge Definition         | [58](nip58.md) |
 | 30023         | 文章Long-form Content            | [23](nip23.md) |
@@ -86,8 +86,8 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 ## Message types
 
 ### Client to Relay
-| type  | description                                         | NIP         |
-|-------|-----------------------------------------------------|-------------|
+| type  | description                                         | NIP            |
+|-------|-----------------------------------------------------|----------------|
 | EVENT | used to publish events                              | [1](nip01.md)  |
 | REQ   | used to request events and subscribe to new updates | [1](nip01.md)  |
 | CLOSE | used to stop previous subscriptions                 | [1](nip01.md)  |
@@ -95,14 +95,14 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | COUNT | used to request event counts                        | [45](nip45.md) |
 
 ### Relay to Client
-| type   | description                                             | NIP         |
-|--------|---------------------------------------------------------|-------------|
+| type   | description                                             | NIP            |
+|--------|---------------------------------------------------------|----------------|
 | EVENT  | used to send events requested to clients                | [1](nip01.md)  |
 | NOTICE | used to send human-readable messages to clients         | [1](nip01.md)  |
-| EOSE   | used to notify clients all stored events have been sent | [1](nip01.md) |
+| EOSE   | used to notify clients all stored events have been sent | [1](nip01.md)  |
 | OK     | used to notify clients if an EVENT was successful       | [20](nip20.md) |
 | AUTH   | used to send authentication challenges                  | [42](nip42.md) |
-| COUNT  | used to send requested event counts to clients          | [45](nip45.md)  |
+| COUNT  | used to send requested event counts to clients          | [45](nip45.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
@@ -110,26 +110,26 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 
 ## Standardized Tags
 
-| name       | value                   | other parameters  | NIP                      |
-| ---------- | ----------------------- | ----------------- | ------------------------ |
+| name       | value                   | other parameters  | NIP                           |
+| ---------- | ----------------------- | ----------------- | ----------------------------- |
 | e          | event id (hex)          | relay URL, marker | [1](nip01.md), [10](nip10.md)  |
-| p          | pubkey (hex)            | relay URL         | [1](nip01.md)               |
+| p          | pubkey (hex)            | relay URL         | [1](nip01.md)                 |
 | a          | coordinates to an event | relay URL         | [33](nip33.md), [23](nip23.md) |
-| r          | a reference (URL, etc)  |                   | [12](nip12.md)              |
-| t          | hashtag                 |                   | [12](nip12.md)              |
-| g          | geohash                 |                   | [12](nip12.md)              |
-| nonce      | random                  |                   | [13](nip13.md)              |
-| subject    | subject                 |                   | [14](nip14.md)              |
-| d          | identifier              |                   | [33](nip33.md)              |
-| expiration | unix timestamp (string) |                   | [40](nip40.md)              |
+| r          | a reference (URL, etc)  |                   | [12](nip12.md)                |
+| t          | hashtag                 |                   | [12](nip12.md)                |
+| g          | geohash                 |                   | [12](nip12.md)                |
+| nonce      | random                  |                   | [13](nip13.md)                |
+| subject    | subject                 |                   | [14](nip14.md)                |
+| d          | identifier              |                   | [33](nip33.md)                |
+| expiration | unix timestamp (string) |                   | [40](nip40.md)                |
 
 ## Criteria for acceptance of NIPs
 
-1. They should be implemented in at least two clients and one relay -- when applicable.
-2. They should make sense.
-3. They should be optional and backwards-compatible: care must be taken such that clients and relays that choose to not implement them do not stop working when interacting with the ones that choose to.
-4. There should be no more than one way of doing the same thing.
-5. Other rules will be made up when necessary.
+1. 它们应该在至少两个客户端和一个中继中实现——如果适用的话。
+2. 它们应该有意义。
+3. 它们应该是可选的和向后兼容的：必须注意，选择不实现它们的客户端和中继在与选择不实现的客户端和中继器交互时不会停止工作。
+4. 做同一件事的方法不应该只有一种。
+5. 其他规则将在必要时制定。
 
 ## License
 
