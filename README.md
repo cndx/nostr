@@ -69,7 +69,7 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 | 9735          | 打赏Zap                          | [57](nip57.md) |
 | 10000         | 屏蔽Mute List                    | [51](nip51.md) |
 | 10001         | Pin List                         | [51](nip51.md) |
-| 10002         | 中继Relay List Metadata          | [65](nip65.md) |
+| 10002         | 中继列表Relay List Metadata      | [65](nip65.md) |
 | 22242         | Client Authentication            | [42](nip42.md) |
 | 24133         | Nostr Connect                    | [46](nip46.md) |
 | 30000         | Categorized People List          | [51](nip51.md) |
