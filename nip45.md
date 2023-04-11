@@ -5,24 +5,24 @@ description: 原文：https://github.com/nostr-protocol/nips/blob/master/45.md
 NIP-45
 ======
 
-Event Counts
+事件计数
 --------------
 
 `draft` `optional` `author:staab`
 
-Relays may support the `COUNT` verb, which provides a mechanism for obtaining event counts.
+中继们可以支持 `COUNT` 动词，该动词提供了获取事件计数的机制。
 
-## Motivation
+## 动机
 
-Some queries a client may want to execute against connected relays are prohibitively expensive, for example, in order to retrieve follower counts for a given pubkey, a client must query all kind-3 events referring to a given pubkey and count them. The result may be cached, either by a client or by a separate indexing server as an alternative, but both options erode the decentralization of the network by creating a second-layer protocol on top of Nostr.
+客户端可能希望对连接的中继执行的一些查询非常昂贵，例如，为了检索给定公钥的跟随者计数，客户端必须查询引用给定公钥的所有3类事件并对其进行计数。作为替代方案，结果可以由客户端或单独的索引服务器缓存，但这两种选择都会通过在Nostr之上创建第二层协议来削弱网络的分散性。
 
-## Filters and return values
+## 过滤器和返回值
 
-This NIP defines a verb called `COUNT`, which accepts a subscription id and a filter as specified in [NIP 01](01.md).
+此NIP定义了一个名为`COUNT`的谓词，该谓词接受中指定的订阅id和筛选器 [NIP 01](nip01.md).
 
-Counts are returned using a `COUNT` response in the form `{count: <integer>}`. Relays may use probabilistic counts to reduce compute requirements.
+计数是使用`{count: <integer>}`形式的`COUNT`响应返回的。中继可以使用概率计数来减少计算需求。
 
-Examples:
+例如:
 
 ```
 # Followers count
