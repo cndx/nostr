@@ -24,7 +24,7 @@ NIP-27
 
 假设Bob正在客户端中编写注释，该客户端具有用户的搜索和自动完成功能，当用户写入字符`@`时会触发该功能。
 
-当Bob键入`"hello @mat"`时，客户端将提示他自动完成[mattn's profile](https://gateway.nostr.com/p/2c7cc62a697ea3a7826521f3fd34f0cb273693cbe5e9310f35449f43622a5cdc)，显示图片和名称。
+当Bob键入`"hello @mat"`时，客户端将提示他自动完成[mattn's profile](https://iris.to/d34110060782337c8864ff76321a821f2dbbcfb0bb33864b1cc48712abd84a80)，显示图片和名称。
 
 Bob按下“回车”，现在他看到他键入的Note是`"hello @mattn"`，`@mattn`突出高亮蓝紫色显示，表明这是一个提及。然而，在内部，事件看起来是这样的：
 
@@ -45,7 +45,7 @@ Bob按下“回车”，现在他看到他键入的Note是`"hello @mattn"`，`@m
 }
 ```
 
-（或者，提到的可能是一个`nostr:npub1...` URL。）
+（或者，提到的可能是一个`nostr:npub1...` URL）
 
 在Bob发布此事件并且Carol看到它之后，她的客户端最初将按原样显示`.content`，但稍后它将解析`.content`，并查看其中是否有`nostr:` URL，对其进行解码，从中提取公钥（并可能中继提示），从其内部数据库或中继中获取该配置文件，然后将完整的URL替换为名称`@mattn`，带有指向该配置文件的内部页面视图的链接。
 
