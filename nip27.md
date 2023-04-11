@@ -5,28 +5,28 @@ description: 原文：https://github.com/nostr-protocol/nips/blob/master/27.md
 NIP-27
 ======
 
-Text Note References
+文本注释参考
 --------------------
 
 `draft` `optional` `author:arthurfranca` `author:hodlbod` `author:fiatjaf`
 
-This document standardizes the treatment given by clients of inline references of other events and profiles inside the `.content` of any event that has readable text in its `.content` (such as kinds 1 and 30023).
+本文档标准化了客户端对`.content`中具有可读文本的任何事件（如kinds 1和30023）的`.content`内的其他事件和配置文件的内联引用的处理。
 
-When creating an event, clients should include mentions to other profiles and to other events in the middle of the `.content` using [NIP-21](21.md) codes, such as `nostr:nprofile1qqsw3dy8cpu...6x2argwghx6egsqstvg`.
+创建事件时，客户端应使用[NIP-21](nip21.md)代码在`.content`中间包含对其他配置文件和其他事件的提及，例如`nostr:nprofile1qqsw3dy8cpu...6x2argwghx6egsqstvg`。
 
-Including [NIP-10](10.md)-style tags (`["e", <hex-id>, <relay-url>, <marker>]`) for each reference is optional, clients should do it whenever they want the profile being mentioned to be notified of the mention, or when they want the referenced event to recognize their mention as a reply.
+为每个引用包含[NIP-10]](nip10.md)-样式标记（`["e", <hex-id>, <relay-url>, <marker>]`）是可选的，客户端应该在希望被提及的配置文件被通知被提及时，或者当他们希望被引用的事件将其提及识别为答复时，都这样做。
 
-A reader client that receives an event with such `nostr:...` mentions in its `.content` can do any desired context augmentation (for example, linking to the profile or showing a preview of the mentioned event contents) it wants in the process. If turning such mentions into links, they could become internal links, [NIP-21](21.md) links or direct links to web clients that will handle these references.
+接收到带有`nostr:...`的事件的读取器客户端在其`.content`中的提及可以在该过程中进行任何所需的上下文增强（例如，链接到配置文件或显示所提及事件内容的预览）。如果将这些提及转化为链接，它们可能会成为内部链接[NIP-21](nip21.md)链接或指向将处理这些引用的网络客户端的直接链接。
 
 ---
 
-## Example of a profile mention process
+## 个人资料提及过程示例
 
-Suppose Bob is writing a note in a client that has search-and-autocomplete functionality for users that is triggered when they write the character `@`.
+假设Bob正在客户端中编写注释，该客户端具有用户的搜索和自动完成功能，当用户写入字符`@`时会触发该功能。
 
-As Bob types `"hello @mat"` the client will prompt him to autocomplete with [mattn's profile](https://gateway.nostr.com/p/2c7cc62a697ea3a7826521f3fd34f0cb273693cbe5e9310f35449f43622a5cdc), showing a picture and name.
+当Bob键入`"hello @mat"`时，客户端将提示他自动完成[mattn's profile](https://gateway.nostr.com/p/2c7cc62a697ea3a7826521f3fd34f0cb273693cbe5e9310f35449f43622a5cdc)，显示图片和名称。
 
-Bob presses "enter" and now he sees his typed note as `"hello @mattn"`, `@mattn` is highlighted, indicating that it is a mention. Internally, however, the event looks like this:
+Bob按下“回车”，现在他看到他键入的Note是`"hello @mattn"`，`@mattn`突出高亮蓝紫色显示，表明这是一个提及。然而，在内部，事件看起来是这样的：
 
 ```json
 {
@@ -45,14 +45,14 @@ Bob presses "enter" and now he sees his typed note as `"hello @mattn"`, `@mattn`
 }
 ```
 
-(Alternatively, the mention could have been a `nostr:npub1...` URL.)
+（或者，提到的可能是一个`nostr:npub1...` URL。）
 
-After Bob publishes this event and Carol sees it, her client will initially display the `.content` as it is, but later it will parse the `.content` and see that there is a `nostr:` URL in there, decode it, extract the public key from it (and possibly relay hints), fetch that profile from its internal database or relays, then replace the full URL with the name `@mattn`, with a link to the internal page view for that profile.
+在Bob发布此事件并且Carol看到它之后，她的客户端最初将按原样显示`.content`，但稍后它将解析`.content`，并查看其中是否有`nostr:` URL，对其进行解码，从中提取公钥（并可能中继提示），从其内部数据库或中继中获取该配置文件，然后将完整的URL替换为名称`@mattn`，带有指向该配置文件的内部页面视图的链接。
 
-## Verbose and probably unnecessary considerations
+## 详细且可能不必要的考虑因素
 
-- The example above was very concrete, but it doesn't mean all clients have to implement the same flow. There could be clients that do not support autocomplete at all, so they just allow users to paste raw [NIP-19](19.md) codes into the body of text, then prefix these with `nostr:` before publishing the event.
-- The flow for referencing other events is similar: a user could paste a `note1...` or `nevent1...` code and the client will turn that into a `nostr:note1...` or `nostr:nevent1...` URL. Then upon reading such references the client may show the referenced note in a preview box or something like that -- or nothing at all.
-- Other display procedures can be employed: for example, if a client that is designed for dealing with only `kind:1` text notes sees, for example, a [`kind:30023`](23.md) `nostr:naddr1...` URL reference in the `.content`, it can, for example, decide to turn that into a link to some hardcoded webapp capable of displaying such events.
-- Clients may give the user the option to include or not include tags for mentioned events or profiles. If someone wants to mention `mattn` without notifying them, but still have a nice augmentable/clickable link to their profile inside their note, they can instruct their client to _not_ create a `["p", ...]` tag for that specific mention.
-- In the same way, if someone wants to reference another note but their reference is not meant to show up along other replies to that same note, their client can choose to not include a corresponding `["e", ...]` tag for any given `nostr:nevent1...` URL inside `.content`. Clients may decide to expose these advanced functionalities to users or be more opinionated about things.
+- 上面的例子非常具体，但这并不意味着所有客户端都必须实现相同的流。可能有一些客户端根本不支持自动完成，所以它们只允许用户将原始[NPI-19](nip19.md)代码粘贴到文本主体中，然后在发布事件之前在这些代码前面加上`nostr:`。
+- 引用其他事件的流程是类似的：用户可以粘贴`note1...`或`nevent1...`代码，客户端会将其转换为`nostr:note1...` 或`nostr:nevent1...` URL。然后，在阅读这些参考资料后，客户可能会在预览框或类似的东西中显示参考的笔记——或者什么都不显示。
+- 可以采用其他显示过程：例如，如果设计用于仅处理`kind:1`文本注释的客户端在`.content`中看到例如[`kind:30023`](nip23.md) `nost:naddr1…`URL引用，则它可以决定将其转换为能够显示此类事件的某些硬编码Web应用程序的链接。
+- 客户端可以为用户提供包括或不包括上述事件或配置文件的标签的选项。如果有人想在不通知他们的情况下提及`mattn`，但在他们的笔记中仍然有一个很好的可扩展/可点击的个人资料链接，他们可以指示客户不为该特定提及创建一个`["p", ...]` 标签。
+- 同样，如果有人想引用另一条注释，但他们的引用并不意味着与对同一条注释的其他回复一起出现，他们的客户可以选择不在`.content`内的任何给定`nost:nevent1…`URL中包含相应的`["e", ...]`标记。客户可能会决定向用户展示这些高级功能，或者对事情更加固执己见。
