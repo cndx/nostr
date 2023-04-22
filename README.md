@@ -4,6 +4,20 @@ From [https://github.com/nostr-protocol/nips](https://github.com/nostr-protocol/
 
 NIPs stand for **Nostr Implementation Possibilities**. They exist to document what may be implemented by [Nostr](https://github.com/fiatjaf/nostr)-compatible _relay_ and _client_ software.
 
+---
+
+- [List](#list)
+- [Event Kinds](#event-kinds)
+  - [Event Kind Ranges](#event-kind-ranges)
+- [Message Types](#message-types)
+  - [Client to Relay](#client-to-relay)
+  - [Relay to Client](#relay-to-client)
+- [Standardized Tags](#standardized-tags)
+- [Criteria for acceptance of NIPs](#criteria-for-acceptance-of-nips)
+- [License](#license)
+
+---
+
 - [NIP-01: Basic protocol flow description](nip01.md)
 - [NIP-02: Contact List and Petnames](nip02.md)
 - [NIP-03: OpenTimestamps Attestations for Events](nip03.md)
@@ -17,7 +31,8 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-11: Relay Information Document](nip11.md)
 - [NIP-12: Generic Tag Queries](nip12.md)
 - [NIP-13: Proof of Work](nip13.md)
-- [NIP-14: Subject tag in text events.](14.md)
+- [NIP-14: Subject tag in text events.](nip14.md)
+- [NIP-15: Nostr Marketplace (for resilient marketplaces)](nip15.md)
 - [NIP-16: Event Treatment](nip16.md)
 - [NIP-18: Reposts](nip18.md)
 - [NIP-19: bech32-encoded entities](nip19.md)
@@ -42,67 +57,74 @@ NIPs stand for **Nostr Implementation Possibilities**. They exist to document wh
 - [NIP-57: Lightning Zaps](nip57.md)
 - [NIP-58: Badges](nip58.md)
 - [NIP-65: Relay List Metadata](nip65.md)
-- [NIP-69: Zap Vote](nip69.md)
+- [NIP-69: Zap Poll](nip69.md)
 - [NIP-78: Application-specific data](nip78.md)
+- [NIP-94: File Header](nip94.md)
 
 ## Event Kinds
 
-| kind          | 描述description                  | NIP           |
-| ------------- | -------------------------------- | ------------- |
-| 0             | 资料Metadata                     | [1](nip01.md)  |
-| 1             | 短文Short Text Note              | [1](nip01.md)  |
-| 2             | 推荐中继Recommend Relay          | [1](nip01.md)  |
-| 3             | 关注列表Contacts                 | [2](nip02.md)  |
-| 4             | 私聊Encrypted Direct Messages    | [4](nip04.md)  |
-| 5             | 撤销Event Deletion               | [9](nip09.md)  |
-| 6             | 快转提升Reposts                  | [18](nip18.md) |
-| 7             | 点赞Reaction                     | [25](nip25.md) |
-| 8             | 徽章授予Badge Award              | [58](nip58.md) |
-| 40            | Channel Creation                 | [28](nip28.md) |
-| 41            | Channel Metadata                 | [28](nip28.md) |
-| 42            | Channel Message                  | [28](nip28.md) |
-| 43            | Channel Hide Message             | [28](nip28.md) |
-| 44            | Channel Mute User                | [28](nip28.md) |
-| 1984          | 举报Reporting                    | [56](nip56.md) |
-| 6969          | 投票Zap Vote                     | [69](nip69.md) |
-| 9734          | Zap Request                      | [57](nip57.md) |
-| 9735          | 打赏Zap                          | [57](nip57.md) |
-| 10000         | 沉默Mute List                    | [51](nip51.md) |
-| 10001         | 固定Pin List                     | [51](nip51.md) |
-| 10002         | 中继列表Relay List Metadata      | [65](nip65.md) |
-| 22242         | Client Authentication            | [42](nip42.md) |
-| 24133         | Nostr Connect                    | [46](nip46.md) |
-| 30000         | 人群Categorized People List      | [51](nip51.md) |
-| 30001         | 书签Categorized Bookmark List    | [51](nip51.md) |
-| 30008         | 佩戴徽章Profile Badges           | [58](nip58.md) |
-| 30009         | 徽章定义Badge Definition         | [58](nip58.md) |
-| 30023         | 文章Long-form Content            | [23](nip23.md) |
-| 30078         | Application-specific Data        | [78](nip78.md) |
-| 1000-9999     | Regular Events                   | [16](nip16.md) |
-| 10000-19999   | Replaceable Events               | [16](nip16.md) |
-| 20000-29999   | Ephemeral Events                 | [16](nip16.md) |
-| 30000-39999   | Parameterized Replaceable Events | [33](nip33.md) |
+| kind            | 描述description                  | NIP           |
+| --------------- | -------------------------------- | ------------- |
+| `0`             | 资料Metadata                     | [1](nip01.md)  |
+| `1`             | 短文Short Text Note              | [1](nip01.md)  |
+| `2`             | 推荐中继Recommend Relay          | [1](nip01.md)  |
+| `3`             | 关注列表Contacts                 | [2](nip02.md)  |
+| `4`             | 私聊Encrypted Direct Messages    | [4](nip04.md)  |
+| `5`             | 撤销Event Deletion               | [9](nip09.md)  |
+| `6`             | 快转提升Reposts                  | [18](nip18.md) |
+| `7`             | 点赞Reaction                     | [25](nip25.md) |
+| `8`             | 徽章授予Badge Award              | [58](nip58.md) |
+| `40`            | Channel Creation                 | [28](nip28.md) |
+| `41`            | Channel Metadata                 | [28](nip28.md) |
+| `42`            | Channel Message                  | [28](nip28.md) |
+| `43`            | Channel Hide Message             | [28](nip28.md) |
+| `44`            | Channel Mute User                | [28](nip28.md) |
+| `1063`          | File Header                      | [94](nip94.md) |
+| `1984`          | 举报Reporting                    | [56](nip56.md) |
+| `6969`          | 调查投票Zap Poll                 | [69](nip69.md) |
+| `9734`          | Zap Request                      | [57](nip57.md) |
+| `9735`          | 打赏Zap                          | [57](nip57.md) |
+| `10000`         | 沉默Mute List                    | [51](nip51.md) |
+| `10001`         | 固定Pin List                     | [51](nip51.md) |
+| `10002`         | 中继列表Relay List Metadata      | [65](nip65.md) |
+| `22242`         | Client Authentication            | [42](nip42.md) |
+| `24133`         | Nostr Connect                    | [46](nip46.md) |
+| `30000`         | 人群Categorized People List      | [51](nip51.md) |
+| `30001`         | 书签Categorized Bookmark List    | [51](nip51.md) |
+| `30008`         | 佩戴徽章Profile Badges           | [58](nip58.md) |
+| `30009`         | 徽章定义Badge Definition         | [58](nip58.md) |
+| `30023`         | 文章Long-form Content            | [23](nip23.md) |
+| `30078`         | Application-specific Data        | [78](nip78.md) |
+
+### Event Kind Ranges
+
+| range            | description                      | NIP         |
+| ---------------- | -------------------------------- | ----------- |
+| `1000`--`9999`   | Regular Events                   | [16](16.md) |
+| `10000`--`19999` | Replaceable Events               | [16](16.md) |
+| `20000`--`29999` | Ephemeral Events                 | [16](16.md) |
+| `30000`--`39999` | Parameterized Replaceable Events | [33](33.md) |
 
 ## Message types
 
 ### Client to Relay
-| type  | description                                         | NIP            |
-|-------|-----------------------------------------------------|----------------|
-| EVENT | used to publish events                              | [1](nip01.md)  |
-| REQ   | used to request events and subscribe to new updates | [1](nip01.md)  |
-| CLOSE | used to stop previous subscriptions                 | [1](nip01.md)  |
-| AUTH  | used to send authentication events                  | [42](nip42.md) |
-| COUNT | used to request event counts                        | [45](nip45.md) |
+| type    | description                                         | NIP         |
+| ------- | --------------------------------------------------- | ----------- |
+| `AUTH`  | used to send authentication events                  | [42](nip42.md) |
+| `CLOSE` | used to stop previous subscriptions                 | [1](nip01.md)  |
+| `COUNT` | used to request event counts                        | [45](nip45.md) |
+| `EVENT` | used to publish events                              | [1](nip01.md)  |
+| `REQ`   | used to request events and subscribe to new updates | [1](nip01.md)  |
 
 ### Relay to Client
-| type   | description                                             | NIP            |
-|--------|---------------------------------------------------------|----------------|
-| EVENT  | used to send events requested to clients                | [1](nip01.md)  |
-| NOTICE | used to send human-readable messages to clients         | [1](nip01.md)  |
-| EOSE   | used to notify clients all stored events have been sent | [1](nip01.md)  |
-| OK     | used to notify clients if an EVENT was successful       | [20](nip20.md) |
-| AUTH   | used to send authentication challenges                  | [42](nip42.md) |
-| COUNT  | used to send requested event counts to clients          | [45](nip45.md) |
+| type     | description                                             | NIP         |
+| -------- | ------------------------------------------------------- | ----------- |
+| `AUTH`   | used to send authentication challenges                  | [42](nip42.md) |
+| `COUNT`  | used to send requested event counts to clients          | [45](nip45.md) |
+| `EOSE`   | used to notify clients all stored events have been sent | [1](nip01.md)  |
+| `EVENT`  | used to send events requested to clients                | [1](nip01.md)  |
+| `NOTICE` | used to send human-readable messages to clients         | [1](nip01.md)  |
+| `OK`     | used to notify clients if an EVENT was successful       | [20](nip20.md) |
 
 Please update these lists when proposing NIPs introducing new event kinds.
 
@@ -110,18 +132,37 @@ When experimenting with kinds, keep in mind the classification introduced by [NI
 
 ## Standardized Tags
 
-| name       | value                   | other parameters  | NIP                           |
-| ---------- | ----------------------- | ----------------- | ----------------------------- |
-| e          | event id (hex)          | relay URL, marker | [1](nip01.md), [10](nip10.md)  |
-| p          | pubkey (hex)            | relay URL         | [1](nip01.md)                 |
-| a          | coordinates to an event | relay URL         | [33](nip33.md), [23](nip23.md) |
-| r          | a reference (URL, etc)  |                   | [12](nip12.md)                |
-| t          | hashtag                 |                   | [12](nip12.md)                |
-| g          | geohash                 |                   | [12](nip12.md)                |
-| nonce      | random                  |                   | [13](nip13.md)                |
-| subject    | subject                 |                   | [14](nip14.md)                |
-| d          | identifier              |                   | [33](nip33.md)                |
-| expiration | unix timestamp (string) |                   | [40](nip40.md)                |
+| name              | value                                | other parameters     | NIP                      |
+| ----------------- | ------------------------------------ | -------------------- | ------------------------ |
+| `a`               | coordinates to an event              | relay URL            | [33](nip33.md), [23](nip23.md) |
+| `d`               | identifier                           | --                   | [33](nip33.md)              |
+| `e`               | event id (hex)                       | relay URL, marker    | [1](nip01.md), [10](nip10.md)  |
+| `g`               | geohash                              | --                   | [12](nip12.md)              |
+| `i`               | identity                             | proof                | [39](nip39.md)              |
+| `p`               | pubkey (hex)                         | relay URL            | [1](nip01.md)               |
+| `r`               | a reference (URL, etc)               | --                   | [12](nip12.md)              |
+| `t`               | hashtag                              | --                   | [12](nip12.md)              |
+| `amount`          | millisats                            | --                   | [57](nip57.md)              |
+| `bolt11`          | `bolt11` invoice                     | --                   | [57](nip57.md)              |
+| `challenge`       | challenge string                     | --                   | [42](nip42.md)              |
+| `content-warning` | reason                               | --                   | [36](nip36.md)              |
+| `delegation`      | pubkey, conditions, delegation token | --                   | [26](nip26.md)              |
+| `description`     | badge description                    | --                   | [58](nip58.md)              |
+| `description`     | invoice description                  | --                   | [57](nip57.md)              |
+| `expiration`      | unix timestamp (string)              | --                   | [40](nip40.md)              |
+| `image`           | image URL                            | dimensions in pixels | [23](nip23.md), [58](nip58.md) |
+| `lnurl`           | `bech32` encoded `lnurl`             | --                   | [57](nip57.md)              |
+| `name`            | badge name                           | --                   | [58](nip58.md)              |
+| `nonce`           | random                               | --                   | [13](nip13.md)              |
+| `preimage`        | hash of `bolt11` invoice             | --                   | [57](nip57.md)              |
+| `published_at`    | unix timestamp (string)              | --                   | [23](nip23.md)              |
+| `relay`           | relay url                            | --                   | [42](nip42.md)              |
+| `relays`          | relay list                           | --                   | [57](nip57.md)              |
+| `subject`         | subject                              | --                   | [14](nip14.md)              |
+| `summary`         | article summary                      | --                   | [23](nip23.md)              |
+| `thumb`           | badge thumbnail                      | dimensions in pixels | [58](nip58.md)              |
+| `title`           | article title                        | --                   | [23](nip23.md)              |
+| `zap`             | profile name                         | type of value        | [57](nip57.md)              |
 
 ## Criteria for acceptance of NIPs
 
